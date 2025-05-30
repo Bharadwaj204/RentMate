@@ -21,3 +21,4 @@ To get started, take a look at src/app/page.tsx.
 -   Clean, sans-serif font for readability and a modern look.
 -   Use outline icons to represent chores and expenses.
 -   Clean and organized layout with clear sections for each module.# RentMate
+# RentMate
