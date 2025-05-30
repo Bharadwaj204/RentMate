@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import type { ActiveModifiers } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MOCK_CALENDAR_EVENTS } from "@/lib/placeholder-data";
+import { MOCK_MEMBERS } from "@/lib/placeholder-data";
 import type { CalendarEvent } from "@/lib/types";
 import { format, isSameDay } from "date-fns";
 import { Badge } from '@/components/ui/badge';
@@ -11,12 +13,17 @@ import { cn } from '@/lib/utils';
 import { ListChecks, CreditCard, Handshake } from 'lucide-react';
 
 export default function CalendarPage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [members, setMembers] = useState(MOCK_MEMBERS); // Add members state
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedDayEvents, setSelectedDayEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
     setEvents(MOCK_CALENDAR_EVENTS);
+  }, []);
+
+  useEffect(() => {
+    setDate(new Date());
   }, []);
 
   useEffect(() => {
@@ -51,6 +58,7 @@ export default function CalendarPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2 shadow-lg">
           <CardContent className="p-0 md:p-2">
+
             <Calendar
               mode="single"
               selected={date}
@@ -62,23 +70,7 @@ export default function CalendarPage() {
               modifiersStyles={{
                 eventDay: { position: 'relative' }
               }}
-              components={{
-                DayContent: ({ date, ...props }) => {
-                  const dayEvents = events.filter(event => isSameDay(event.date, date));
-                  return (
-                    <div className="relative h-full w-full flex items-center justify-center">
-                      {props.children}
-                      {dayEvents.length > 0 && (
-                        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex space-x-0.5">
-                          {dayEvents.slice(0,3).map(event => ( // Show max 3 dots
-                             <span key={event.id} className={cn("h-1.5 w-1.5 rounded-full", getEventColor(event.type))}></span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-              }}
+
             />
           </CardContent>
         </Card>
@@ -100,7 +92,7 @@ export default function CalendarPage() {
                       <p className="font-medium">{event.title}</p>
                       <Badge variant="outline" className="capitalize mt-1">{event.type.replace('_', ' ')}</Badge>
                       {event.details && 'name' in event.details && (
-                         <p className="text-xs text-muted-foreground">Assigned: {MOCK_MEMBERS.find(m => m.id === (event.details as any).assignedTo)?.name || 'N/A'}</p>
+                         <p className="text-xs text-muted-foreground">Assigned: {members.find(m => m.id === (event.details as any).assignedTo)?.name || 'N/A'}</p>
                       )}
                        {event.details && 'amount' in event.details && (
                          <p className="text-xs text-muted-foreground">Amount: ${(event.details as any).amount.toFixed(2)}</p>

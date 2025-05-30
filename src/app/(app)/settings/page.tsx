@@ -11,9 +11,8 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DEFAULT_AVATAR } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
-import { Save, FileCsv, Bell, Palette, ShieldCheck } from "lucide-react";
+import { Save, Files, Bell, Palette, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
 
 export default function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<Member | null>(null);
@@ -126,12 +125,12 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><FileCsv />Data Management</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Files />Data Management</CardTitle>
           <CardDescription>Export your household data.</CardDescription>
         </CardHeader>
         <CardContent>
           <Button variant="outline" onClick={handleExportData}>
-            <FileCsv className="mr-2 h-4 w-4" /> Export All Data (CSV - Demo)
+            <Files className="mr-2 h-4 w-4" /> Export All Data (CSV - Demo)
           </Button>
            <p className="mt-2 text-sm text-muted-foreground">
             This will export chores, expenses, and household member information.

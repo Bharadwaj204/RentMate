@@ -16,6 +16,7 @@ import type { Chore, ChoreFrequency, Member } from "@/lib/types";
 import { addDays, format, parseISO } from "date-fns";
 import { PlusCircle, Trash2, Edit3, Sparkles, History, ListChecks } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { suggestChoreSchedule, ChoreSuggestionInput, ChoreSuggestionOutput } from '@/ai/flows/chore-suggestion'; // Assuming AI flow can be called from client for now
 
 export default function ChoresPage() {
@@ -228,7 +229,7 @@ export default function ChoresPage() {
                         <SelectValue placeholder="Select member" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None (Unassigned)</SelectItem>
+ <SelectItem value="unassigned">None (Unassigned)</SelectItem>
                         {members.map(member => (
                           <SelectItem key={member.id} value={member.id}>{member.name}</SelectItem>
                         ))}

@@ -45,7 +45,7 @@ export default function LandingPage() {
         </div>
         <div className="md:w-1/2 flex justify-center">
           <Image 
-            src="https://placehold.co/500x400.png" 
+            src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg"
             alt="Happy roommates organizing their home" 
             width={500} 
             height={400}

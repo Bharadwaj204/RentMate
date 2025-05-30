@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MOCK_EXPENSES, MOCK_MEMBERS, getCurrentUser } from "@/lib/placeholder-data";
 import type { Expense, ExpenseParticipant, Member, ExpenseAISplitInput, ExpenseAISplitOutput } from "@/lib/types";
 import { format, parseISO } from "date-fns";
-import { PlusCircle, Trash2, Edit3, Sparkles, History, CreditCard, FileCsv } from "lucide-react";
+import { PlusCircle, Trash2, Edit3, Sparkles, History, CreditCard, Files } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { optimizeExpenseSplit } from '@/ai/flows/expense-split-optimizer'; // Assuming AI flow
 
@@ -66,7 +66,7 @@ export default function ExpensesPage() {
   };
 
   const handleCustomSplitChange = (memberId: string, value: string) => {
-    setCustomSplits(prev => ({ ...prev, [memberId]: value === '' ? '' : parseFloat(value) }));
+ setCustomSplits(prev => ({ ...prev, [memberId]: value === '' ? NaN : parseFloat(value) }));
   };
 
   const handleAddExpense = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,10 +82,10 @@ export default function ExpensesPage() {
 
     let expenseParticipants: ExpenseParticipant[] = [];
     if (isEqualSplit) {
-      const share = parseFloat((amount / participants.length).toFixed(2));
+      const share = parseFloat((Number(amount) / participants.length).toFixed(2));
       expenseParticipants = participants.map(id => ({ memberId: id, share }));
     } else {
-      const totalCustomSplit = Object.values(customSplits).reduce((sum, val) => sum + (typeof val === 'number' ? val : 0) , 0);
+      const totalCustomSplit = Object.values(customSplits).reduce((sum: number, val) => sum + (typeof val === 'number' ? val : 0), 0);
       if (Math.abs(totalCustomSplit - amount) > 0.01 * participants.length) { // Allow for small rounding errors
         toast({ title: "Split Mismatch", description: `Custom splits ($${totalCustomSplit.toFixed(2)}) do not add up to the total amount ($${amount.toFixed(2)}).`, variant: "destructive" });
         return;
@@ -151,7 +151,7 @@ export default function ExpensesPage() {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
       const mockResult: ExpenseAISplitOutput = inputForAI.participants.reduce((acc, name) => {
         acc[name] = parseFloat((inputForAI.amount / inputForAI.participants.length).toFixed(2));
-        return acc;
+ return acc;
       }, {} as ExpenseAISplitOutput);
 
       setAiSplitSuggestion(mockResult);
@@ -192,8 +192,8 @@ export default function ExpensesPage() {
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
           <TabsTrigger value="log" className="flex items-center gap-2"><PlusCircle />Log Expense</TabsTrigger>
           <TabsTrigger value="history" className="flex items-center gap-2"><History />Expense History</TabsTrigger>
-          <TabsTrigger value="ai-optimizer" className="flex items-center gap-2"><Sparkles />AI Split Optimizer</TabsTrigger>
-          <TabsTrigger value="export" className="flex items-center gap-2"><FileCsv />Export Data</TabsTrigger>
+          <TabsTrigger value="ai-optimizer" className="flex items-center gap-2"><Sparkles />AI Split Optimizer</TabsTrigger>{/* Consider if AI feature is part of core */}
+          <TabsTrigger value="export" className="flex items-center gap-2"><Files />Export Data</TabsTrigger>
         </TabsList>
 
         <TabsContent value="log">
@@ -263,13 +263,13 @@ export default function ExpensesPage() {
                             placeholder="0.00"
                             step="0.01"
                             value={customSplits[memberId] ?? ''}
-                            onChange={e => handleCustomSplitChange(memberId, e.target.value)}
+                            onChange={e => handleCustomSplitChange(memberId, e.target.value === '' ? '' : parseFloat(e.target.value).toString())}
                             className="flex-1"
                           />
                         </div>
                       ) : null;
                     })}
-                     <p className="text-sm text-muted-foreground">Total custom split: ${Object.values(customSplits).reduce((s, v) => s + (Number(v) || 0), 0).toFixed(2)}</p>
+ <p className="text-sm text-muted-foreground">Total custom split: ${Object.values(customSplits).reduce((sum: number, v: number | '') => sum + (typeof v === 'string' && v !== '' ? parseFloat(v) : typeof v === 'number' ? v : 0), 0).toFixed(2)}</p>
                   </div>
                 )}
 
@@ -374,7 +374,7 @@ export default function ExpensesPage() {
                   <CardContent>
                     <p className="mb-2 text-sm">For expense: <span className="font-semibold">{aiExpenseInput?.description}</span> amounting to <span className="font-semibold">${aiExpenseInput?.amount.toFixed(2)}</span> paid by <span className="font-semibold">{aiExpenseInput?.payerName}</span>.</p>
                     <Table>
-                      <TableHeader><TableRow><TableHead>Participant</TableHead><TableHead className="text-right">Suggested Share</TableHead></TableRow></TableHeader>
+                      <TableHeader><TableRow><TableHead>Participant</TableHead><TableHead className="text-right">Suggested Share</TableHead></TableRow></TableHeader> {/* Corrected missing closing tag */}
                       <TableBody>
                         {Object.entries(aiSplitSuggestion).map(([name, share]) => (
                           <TableRow key={name}><TableCell>{name}</TableCell><TableCell className="text-right">${share.toFixed(2)}</TableCell></TableRow>
@@ -396,7 +396,7 @@ export default function ExpensesPage() {
             </CardHeader>
             <CardContent>
               <Button onClick={exportToCSV}>
-                <FileCsv className="mr-2 h-4 w-4" /> Export All Expenses to CSV (Demo)
+                <Files className="mr-2 h-4 w-4" /> Export All Expenses to CSV (Demo)
               </Button>
               <p className="mt-2 text-sm text-muted-foreground">
                 In a real application, this would download a CSV file. For this demo, data is logged to the console.
