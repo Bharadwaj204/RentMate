@@ -41,7 +41,7 @@ To get a local copy up and running, follow these simple steps:
 
 ## Live Demo
 
-A live demo of the project is available [here](link_to_live_demo)
+A live demo of the project is available [rentmate-8mn8o.web.app](https://rentmate-8mn8o.web.app/)
 
 ## Style Guidelines:
 
