@@ -20,4 +20,4 @@ To get started, take a look at src/app/page.tsx.
 -   Accent color: Soft green (#A5D6A7), to highlight positive balance and settlement actions.
 -   Clean, sans-serif font for readability and a modern look.
 -   Use outline icons to represent chores and expenses.
--   Clean and organized layout with clear sections for each module.
+-   Clean and organized layout with clear sections for each module.# RentMate
